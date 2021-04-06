@@ -1,4 +1,5 @@
-﻿using AppServices.IServices;
+﻿using AppServices.EmailService;
+using AppServices.IServices;
 using DomainEntities;
 using DTOs.RequestDtos;
 using DTOs.ResponseDtos;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -19,9 +21,12 @@ namespace OnboardingApp.Controllers
     public class AuthenticationController : ControllerBase
     {
         IUserService userService;
-        public AuthenticationController(IUserService userService)
+        private Random random = new Random();
+        private readonly IEmailSender _emailSender;
+        public AuthenticationController(IUserService userService, IEmailSender _emailSender)
         {
             this.userService = userService;
+            this._emailSender = _emailSender;
         }
 
         [AllowAnonymous]
@@ -56,8 +61,8 @@ namespace OnboardingApp.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("ForgotPassword")]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
+        [Route("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
         {
             if (ModelState.IsValid)
             {
@@ -67,9 +72,11 @@ namespace OnboardingApp.Controllers
                     if (user != null)
                     {
                         string token = await userService.GeneratePasswordResetTokenAsync(user);
-                        // we will change url for hosted url then
-                        var url = $"https://localhost:55179/resetpassword?email={request.Email}&token={token}";
-                        SendMailFunc(token, "testuserg38@gmail.com", url, "");
+                        string password = this.RandomString(8);
+                        var resetPassResult = await userService.ResetPasswordAsync(user, token, password);
+
+                        var message = new Message(new string[] { user.Email }, "New password", "Your New Password is: " + password, null);
+                        await _emailSender.SendEmailAsync(message);
                     }
                 }
                 catch (Exception ex)
@@ -85,41 +92,12 @@ namespace OnboardingApp.Controllers
             return Ok();
         }
 
-        private static string SendMailFunc(string subject, string recepient, string message, string filePath)
+   
+        private string RandomString(int length)
         {
-            try
-            {
-                
-                 
-                string From_Mail = "testuserg38@gmail.com";
-                string From_Password = "Test123321";
-                MailAddress fromAddress = new MailAddress(From_Mail);
-                MailAddress toAddress = new MailAddress(recepient);
-                MailMessage mail = new MailMessage(fromAddress.Address, toAddress.Address)
-                {
-                    Subject = subject,
-                    Body = message
-                };
-
-                
-                SmtpClient client = new SmtpClient
-                {
-                    Host = "smtp.gmail.com",
-                    Port = 587,
-                    EnableSsl = true,
-                    Timeout = 50000,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(From_Mail, From_Password)
-                };
-
-                client.Send(mail);
-                return "Mail sent";
-            }
-            catch (Exception)
-            {
-            }
-            return "Error occured";
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
         }
-
     }
 }

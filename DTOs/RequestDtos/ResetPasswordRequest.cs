@@ -1,6 +1,6 @@
 ﻿namespace DTOs.RequestDtos
 {
-    public class ForgotPasswordRequest
+    public class ResetPasswordRequest
     {
         public string Email { get; set; }
     }

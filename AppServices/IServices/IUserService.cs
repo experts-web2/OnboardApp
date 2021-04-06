@@ -12,5 +12,6 @@ namespace AppServices.IServices
         Task<User> GetUserByEmailAsync(string email);
         string GenerateJSONWebToken(string userName);
         Task<string> GeneratePasswordResetTokenAsync(User user);
+        Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
     }
 }

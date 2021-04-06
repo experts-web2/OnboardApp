@@ -36,7 +36,7 @@ namespace AppServices.Repositories
         {
             try
             {
-                await userManager.CreateAsync(new User { UserName = login.Email, Email = login.Email, CreatedDate = DateTime.UtcNow }, login.Password);
+               // await userManager.CreateAsync(new User { UserName = login.Email, Email = login.Email, CreatedDate = DateTime.UtcNow }, login.Password);
                 return await signInManager.PasswordSignInAsync(login.Email, login.Password, login.RememberMe, false);
             }
             catch (Exception)
@@ -82,6 +82,20 @@ namespace AppServices.Repositories
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
+        {
+            try
+            {
+                return userManager.ResetPasswordAsync(user, token, password);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+          
         }
 
     }

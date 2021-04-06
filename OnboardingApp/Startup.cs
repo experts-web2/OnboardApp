@@ -1,3 +1,4 @@
+using AppServices.EmailService;
 using AppServices.IServices;
 using AppServices.OnBoardContext;
 using AppServices.Repositories;
@@ -72,7 +73,11 @@ namespace OnboardingApp
             });
 
             services.AddTransient<IUserService, UserRepo>();
-
+            var emailConfig = Configuration
+              .GetSection("EmailConfiguration")
+              .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
+            services.AddScoped<IEmailSender, EmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

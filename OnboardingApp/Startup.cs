@@ -35,9 +35,14 @@ namespace OnboardingApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<OnBoardDbContext>(config =>
+            {
+                // for in memory database  
+                config.UseInMemoryDatabase(databaseName: "OnBoard");
+            });
 
-            services.AddDbContext<OnBoardDbContext>(options =>
-                           options.UseSqlServer(Configuration.GetConnectionString("OnBoardConnection"), sqlOptions => sqlOptions.MigrationsAssembly("AppServices")));
+            //services.AddDbContext<OnBoardDbContext>(options =>
+            //               options.UseSqlServer(Configuration.GetConnectionString("OnBoardConnection"), sqlOptions => sqlOptions.MigrationsAssembly("AppServices")));
 
             services.AddControllers();
             services.AddIdentity<User, IdentityRole>(options =>

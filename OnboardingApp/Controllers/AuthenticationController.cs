@@ -29,6 +29,29 @@ namespace OnboardingApp.Controllers
             this._emailSender = _emailSender;
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("register")]
+        public async Task<IActionResult> Register(RegisterRequest register)
+        {
+            try
+            {
+                var result = await userService.RegisterUser(register);
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    throw new Exception("Bad Request");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
+        }
+
         [AllowAnonymous]
         [HttpPost]
         [Route("Login")]

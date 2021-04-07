@@ -32,11 +32,27 @@ namespace AppServices.Repositories
             securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecretKey"]));
             credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         }
+
+        public async Task<IdentityResult> RegisterUser(RegisterRequest register)
+        {
+            try
+            {
+                var result =  await userManager.CreateAsync(new User { UserName = register.Email, Email = register.Email, CreatedDate = DateTime.UtcNow }, register.Password);
+                var users = userManager.Users.ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
         public async Task<SignInResult> LoginUser(LoginRequest login)
         {
             try
             {
-               // await userManager.CreateAsync(new User { UserName = login.Email, Email = login.Email, CreatedDate = DateTime.UtcNow }, login.Password);
+                var users = userManager.Users.ToList();
                 return await signInManager.PasswordSignInAsync(login.Email, login.Password, login.RememberMe, false);
             }
             catch (Exception)

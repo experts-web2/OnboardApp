@@ -9,6 +9,7 @@ namespace AppServices.IServices
     public interface IUserService
     {
         Task<SignInResult> LoginUser(LoginRequest login);
+        Task<IdentityResult> RegisterUser(RegisterRequest register);
         Task<User> GetUserByEmailAsync(string email);
         string GenerateJSONWebToken(string userName);
         Task<string> GeneratePasswordResetTokenAsync(User user);

@@ -4,6 +4,7 @@ using DomainEntities;
 using DTOs.RequestDtos;
 using DTOs.ResponseDtos;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,9 @@ namespace OnboardingApp.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("register")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Register(RegisterRequest register)
         {
             try
@@ -43,12 +47,12 @@ namespace OnboardingApp.Controllers
                 }
                 else
                 {
-                    throw new Exception("Bad Request");
+                    return Conflict(result.Errors.Select(x => x.Description));
                 }
             }
             catch (Exception ex)
             {
-                return Content(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -104,7 +108,7 @@ namespace OnboardingApp.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Content(ex.Message);
+                    return BadRequest(ex.Message);
                 }
             }
             else
@@ -112,7 +116,7 @@ namespace OnboardingApp.Controllers
                 // If we got this far, something failed
                 return BadRequest(ModelState);
             }
-            return Ok();
+            return Ok("Password has been sent on your email address");
         }
 
    

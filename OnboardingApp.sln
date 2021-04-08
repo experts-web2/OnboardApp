@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnboardingApp", "OnboardingApp\OnboardingApp.csproj", "{6BE09352-EDF8-49CE-AC86-21D8DA1A79F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnboardingApp", "OnboardingApp\OnboardingApp.csproj", "{6BE09352-EDF8-49CE-AC86-21D8DA1A79F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainEntities", "DomainEntities\DomainEntities.csproj", "{968DB889-6091-4A14-97D3-5C356AB4359F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainEntities", "DomainEntities\DomainEntities.csproj", "{968DB889-6091-4A14-97D3-5C356AB4359F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppServices", "AppServices\AppServices.csproj", "{B2C512B5-E89B-43A0-8AC4-2058DB372E55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppServices", "AppServices\AppServices.csproj", "{B2C512B5-E89B-43A0-8AC4-2058DB372E55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTOs", "DTOs\DTOs.csproj", "{B75267AF-3230-4E1B-B6B7-1822DC228504}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DTOs", "DTOs\DTOs.csproj", "{B75267AF-3230-4E1B-B6B7-1822DC228504}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppRepo", "AppRepo\AppRepo.csproj", "{930A7ECC-6B70-4B84-94C7-F0747FACF24B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{B75267AF-3230-4E1B-B6B7-1822DC228504}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B75267AF-3230-4E1B-B6B7-1822DC228504}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B75267AF-3230-4E1B-B6B7-1822DC228504}.Release|Any CPU.Build.0 = Release|Any CPU
+		{930A7ECC-6B70-4B84-94C7-F0747FACF24B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{930A7ECC-6B70-4B84-94C7-F0747FACF24B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{930A7ECC-6B70-4B84-94C7-F0747FACF24B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{930A7ECC-6B70-4B84-94C7-F0747FACF24B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,25 +1,21 @@
+using AppRepo.Interfaces;
+using AppRepo.Repositories;
 using AppServices.EmailService;
-using AppServices.IServices;
-using AppServices.OnBoardContext;
-using AppServices.Repositories;
+using AppServices.Interfaces;
+using AppServices.UserService;
 using DomainEntities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace OnboardingApp
 {
@@ -41,8 +37,8 @@ namespace OnboardingApp
                 config.UseInMemoryDatabase(databaseName: "OnBoard");
             });
 
-            //services.AddDbContext<OnBoardDbContext>(options =>
-            //               options.UseSqlServer(Configuration.GetConnectionString("OnBoardConnection"), sqlOptions => sqlOptions.MigrationsAssembly("AppServices")));
+            services.AddDbContext<OnBoardDbContext>(options =>
+                           options.UseSqlServer(Configuration.GetConnectionString("OnBoardConnection"), sqlOptions => sqlOptions.MigrationsAssembly("AppServices")));
 
             services.AddControllers();
             services.AddIdentity<User, IdentityRole>(options =>
@@ -77,7 +73,9 @@ namespace OnboardingApp
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "OnboardingApp", Version = "v1" });
             });
 
-            services.AddTransient<IUserService, UserRepo>();
+            services.AddTransient<IUserRepo, UserRepo>();
+            services.AddTransient<IUserService, UserService>();
+
             var emailConfig = Configuration
               .GetSection("EmailConfiguration")
               .Get<EmailConfiguration>();

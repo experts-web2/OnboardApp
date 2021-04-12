@@ -1,17 +1,15 @@
 ﻿using AppRepo.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AppServices.Interfaces;
+using AppRepo.UnitOfWork;
 using DomainEntities;
-using Microsoft.AspNetCore.Identity;
 using DTOs.RequestDtos;
 using DTOs.ResponseDtos;
-using AppServices.EmailService;
+using Microsoft.AspNetCore.Identity;
+using OnboardingApp.Infrastructure.EmailService;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace AppServices.UserService
+namespace OnboardingApp.Infrastructure.UserService
 {
     public class UserService : Interfaces.IUserService
     {
@@ -22,8 +20,9 @@ namespace AppServices.UserService
         {
             this.userRepo = userRepo;
             this._emailSender = _emailSender;
-        }            
-      
+        }
+
+        #region public methods
 
         /// <summary>
         /// This Method Will Givent the user by passing email
@@ -103,14 +102,9 @@ namespace AppServices.UserService
             return userRepo.RegisterUser(register);
         }
 
-        /// <summary>
-        /// This method will Reset the Password by Calling User Repo ResetPasswordAsync Password via Identity.
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="token"></param>
-        /// <param name="password"></param>
-        /// <returns>Identity Result</returns>
-        
+        #endregion
+
+        #region private methods
 
         /// <summary>
         /// This method Will generate the Random Password
@@ -123,5 +117,7 @@ namespace AppServices.UserService
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
+        #endregion
     }
 }

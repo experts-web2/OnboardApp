@@ -1,14 +1,14 @@
-﻿using AppServices.EmailService;
-using AppServices.Interfaces;
-using DomainEntities;
+﻿using OnboardingApp.Infrastructure.Interfaces;
 using DTOs.RequestDtos;
-using DTOs.ResponseDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using OnboardingApp.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using AppRepo.UnitOfWork;
 
 namespace OnboardingApp.Controllers
 {
@@ -18,11 +18,12 @@ namespace OnboardingApp.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IUserService userService;
-
         public AuthenticationController(IUserService userService)
         {
             this.userService = userService;
         }
+
+        #region public methods
 
         /// <summary>
         /// This Endpoint will take the Request to Register the User and it will be registered the User.
@@ -39,19 +40,15 @@ namespace OnboardingApp.Controllers
         {
             try
             {
-                var result = await userService.RegisterUser(register);
-                if (result.Succeeded)
-                {
-                    return Ok();
-                }
+                IdentityResult result = await userService.RegisterUser(register);
+                if(result.Succeeded)
+                    return Ok(SetResponse(new {}, true));
                 else
-                {
-                    return Conflict(result.Errors.Select(x => x.Description));
-                }
+                    return BadRequest(SetResponse(new {}, false, string.Join(", ", result.Errors.Select(x=>x.Description))));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(SetResponse(new {}, false, ex.Message));
             }
         }
 
@@ -62,7 +59,7 @@ namespace OnboardingApp.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
-        [Route("Login")]
+        [Route("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
@@ -70,12 +67,12 @@ namespace OnboardingApp.Controllers
             try
             {
                 var result = await userService.LoginUser(loginRequest);
-                return Ok(result);
-               
+                return Ok(SetResponse(result, true));
             }
+
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(SetResponse(new {}, false, ex.Message));
             }
         }
 
@@ -87,7 +84,7 @@ namespace OnboardingApp.Controllers
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
-        [Route("ResetPassword")]
+        [Route("resetpassword")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
@@ -95,18 +92,30 @@ namespace OnboardingApp.Controllers
 
             try
             {
-                await userService.ResetPasswordAsync(request.Email);
-                return Ok("Password has been sent on your email address");
+                 await userService.ResetPasswordAsync(request.Email);
+                 return Ok(SetResponse(new {message= "Password has been sent on your email address" }, true));
 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(SetResponse(new { }, false, ex.Message));
             }
         }
 
+        #endregion
+
+        #region private methods
+
+        private static Response<T> SetResponse<T>(T responseData, bool isSuccess, string errorMessage = null)
+        {
+            return new Response<T>
+            {
+                Data = responseData,
+                IsSuccess = isSuccess,
+                ErrorMessage = errorMessage
+            };
+        }
+
+        #endregion
     }
-
-
 }
-

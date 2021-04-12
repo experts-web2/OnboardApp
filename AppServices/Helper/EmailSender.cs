@@ -1,16 +1,16 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
-using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AppServices.EmailService
+namespace OnboardingApp.Infrastructure.EmailService
 {
     public class EmailSender : IEmailSender
     {
         private readonly EmailConfiguration _emailConfig;
 
+        #region public methods
         public EmailSender(EmailConfiguration emailConfig)
         {
             _emailConfig = emailConfig;
@@ -30,6 +30,9 @@ namespace AppServices.EmailService
             await SendAsync(mailMessage);
         }
 
+        #endregion
+
+        #region private region
         private MimeMessage CreateEmailMessage(Message message)
         {
             var emailMessage = new MimeMessage();
@@ -107,5 +110,7 @@ namespace AppServices.EmailService
                 }
             }
         }
+
+        #endregion
     }
 }

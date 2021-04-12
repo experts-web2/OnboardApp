@@ -1,8 +1,5 @@
 using AppRepo.Interfaces;
 using AppRepo.Repositories;
-using AppServices.EmailService;
-using AppServices.Interfaces;
-using AppServices.UserService;
 using DomainEntities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OnboardingApp.Infrastructure.EmailService;
+using OnboardingApp.Infrastructure.Interfaces;
+using OnboardingApp.Infrastructure.UserService;
 using System;
 using System.Text;
 
@@ -75,6 +75,8 @@ namespace OnboardingApp
 
             services.AddTransient<IUserRepo, UserRepo>();
             services.AddTransient<IUserService, UserService>();
+
+       //     services.AddScoped<IBaseRepository< ,Guid>, BaseRepository< , Guid>>();
 
             var emailConfig = Configuration
               .GetSection("EmailConfiguration")

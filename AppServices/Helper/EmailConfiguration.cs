@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AppServices.EmailService
+namespace OnboardingApp.Infrastructure.EmailService
 {
     public class EmailConfiguration
     {

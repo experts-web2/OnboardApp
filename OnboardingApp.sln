@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnboardingApp", "Onboarding
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainEntities", "DomainEntities\DomainEntities.csproj", "{968DB889-6091-4A14-97D3-5C356AB4359F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppServices", "AppServices\AppServices.csproj", "{B2C512B5-E89B-43A0-8AC4-2058DB372E55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnboardingApp.Infrastructure", "AppServices\OnboardingApp.Infrastructure.csproj", "{B2C512B5-E89B-43A0-8AC4-2058DB372E55}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DTOs", "DTOs\DTOs.csproj", "{B75267AF-3230-4E1B-B6B7-1822DC228504}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppRepo", "AppRepo\AppRepo.csproj", "{930A7ECC-6B70-4B84-94C7-F0747FACF24B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppRepo", "AppRepo\AppRepo.csproj", "{930A7ECC-6B70-4B84-94C7-F0747FACF24B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

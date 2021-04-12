@@ -1,15 +1,9 @@
-﻿using AppServices.EmailService;
-using DomainEntities;
-using DTOs.RequestDtos;
+﻿using DTOs.RequestDtos;
 using DTOs.ResponseDtos;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace AppServices.Interfaces
+namespace OnboardingApp.Infrastructure.Interfaces
 {
     public interface IUserService
     {

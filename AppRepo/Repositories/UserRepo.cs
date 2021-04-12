@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace AppRepo.Repositories
 {
-    public class UserRepo : IUserRepo
+    public class UserRepo : IUserRepo 
     {
         private readonly SignInManager<User> signInManager;
         private readonly UserManager<User> userManager;
@@ -30,6 +30,8 @@ namespace AppRepo.Repositories
             securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecretKey"]));
             credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         }
+
+        #region public Methods
 
         /// <summary>
         /// This Method Will Create the User by using Identity. 
@@ -142,6 +144,7 @@ namespace AppRepo.Repositories
 
         }
 
+        #endregion
     }
 }
 

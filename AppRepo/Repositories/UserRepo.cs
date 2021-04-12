@@ -111,6 +111,7 @@ namespace AppRepo.Repositories
         /// </summary>
         /// <param name="userName"></param>
         /// <returns>Token</returns>
+        
         public string GenerateJSONWebToken(string userName)
         {
             var token = new JwtSecurityToken(

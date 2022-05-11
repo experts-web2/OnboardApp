@@ -1,3 +1,2 @@
 # OnboardApp
-.Net Core API with Authentication
-Application with .Net using Entity Framework Code First and Repository Pattern
+.Net Core API with Authentication using Entity Framework Code First and Repository Pattern

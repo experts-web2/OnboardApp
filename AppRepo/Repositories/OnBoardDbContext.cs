@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace AppServices.OnBoardContext
+namespace AppRepo.Repositories
 {
     public class OnBoardDbContext : IdentityDbContext<User>
     {

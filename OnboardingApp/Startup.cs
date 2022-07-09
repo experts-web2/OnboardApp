@@ -1,25 +1,21 @@
-using AppServices.EmailService;
-using AppServices.IServices;
-using AppServices.OnBoardContext;
-using AppServices.Repositories;
+using AppRepo.Interfaces;
+using AppRepo.Repositories;
 using DomainEntities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OnboardingApp.Infrastructure.EmailService;
+using OnboardingApp.Infrastructure.Interfaces;
+using OnboardingApp.Infrastructure.UserService;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace OnboardingApp
 {
@@ -35,6 +31,11 @@ namespace OnboardingApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<OnBoardDbContext>(config =>
+            {
+                // for in memory database  
+                config.UseInMemoryDatabase(databaseName: "OnBoard");
+            });
 
             services.AddDbContext<OnBoardDbContext>(options =>
                            options.UseSqlServer(Configuration.GetConnectionString("OnBoardConnection"), sqlOptions => sqlOptions.MigrationsAssembly("AppServices")));
@@ -72,7 +73,11 @@ namespace OnboardingApp
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "OnboardingApp", Version = "v1" });
             });
 
-            services.AddTransient<IUserService, UserRepo>();
+            services.AddTransient<IUserRepo, UserRepo>();
+            services.AddTransient<IUserService, UserService>();
+
+       //     services.AddScoped<IBaseRepository< ,Guid>, BaseRepository< , Guid>>();
+
             var emailConfig = Configuration
               .GetSection("EmailConfiguration")
               .Get<EmailConfiguration>();

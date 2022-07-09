@@ -1,17 +1,14 @@
-﻿using AppServices.EmailService;
-using AppServices.IServices;
-using DomainEntities;
+﻿using OnboardingApp.Infrastructure.Interfaces;
 using DTOs.RequestDtos;
-using DTOs.ResponseDtos;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
-using System.Net;
-using System.Net.Mail;
 using System.Threading.Tasks;
+using OnboardingApp.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace OnboardingApp.Controllers
 {
@@ -20,84 +17,105 @@ namespace OnboardingApp.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        IUserService userService;
-        private Random random = new Random();
-        private readonly IEmailSender _emailSender;
-        public AuthenticationController(IUserService userService, IEmailSender _emailSender)
+        private readonly IUserService userService;
+        public AuthenticationController(IUserService userService)
         {
             this.userService = userService;
-            this._emailSender = _emailSender;
         }
 
+        #region public methods
+
+        /// <summary>
+        /// This Endpoint will take the Request to Register the User and it will be registered the User.
+        /// </summary>
+        /// <param name="register"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("register")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Register(RegisterRequest register)
+        {
+            try
+            {
+                IdentityResult result = await userService.RegisterUser(register);
+                if(result.Succeeded)
+                    return Ok(SetResponse(new {}, true));
+                else
+                    return BadRequest(SetResponse(new {}, false, string.Join(", ", result.Errors.Select(x=>x.Description))));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(SetResponse(new {}, false, ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// This Endpoint will Login the User after taking valid request
+        /// </summary>
+        /// <param name="loginRequest"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
-        [Route("Login")]
+        [Route("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
             try
             {
                 var result = await userService.LoginUser(loginRequest);
-                if (result.Succeeded)
-                {
-                    User user = await userService.GetUserByEmailAsync(loginRequest.Email);
-                    return Ok( new LoginResponse
-                    {
-                        UserId = user.Id,
-                        Token = userService.GenerateJSONWebToken(user.UserName),
-                        Email = user.Email,
-                        CreatedDate = user.CreatedDate
-                    });
-                }
-                else
-                {
-                    return BadRequest("Credential Issue");
-                }
+                return Ok(SetResponse(result, true));
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(SetResponse(new {}, false, ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Gets email in request
+        /// and sends the Password to his Email Address. 
+        /// </summary>
+        /// <param name="request">ResetPasswordRequest</param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("resetpassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        {
+
+            try
+            {
+                 await userService.ResetPasswordAsync(request.Email);
+                 return Ok(SetResponse(new {message= "Password has been sent on your email address" }, true));
+
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(SetResponse(new { }, false, ex.Message));
             }
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("ResetPassword")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        #endregion
+
+        #region private methods
+
+        private static Response<T> SetResponse<T>(T responseData, bool isSuccess, string errorMessage = null)
         {
-            if (ModelState.IsValid)
+            return new Response<T>
             {
-                try
-                {
-                    User user = await userService.GetUserByEmailAsync(request.Email);
-                    if (user != null)
-                    {
-                        string token = await userService.GeneratePasswordResetTokenAsync(user);
-                        string password = this.RandomString(8);
-                        var resetPassResult = await userService.ResetPasswordAsync(user, token, password);
-
-                        var message = new Message(new string[] { user.Email }, "New password", "Your New Password is: " + password, null);
-                        await _emailSender.SendEmailAsync(message);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return Content(ex.Message);
-                }
-            }
-            else
-            {
-                // If we got this far, something failed, redisplay form
-                return BadRequest(ModelState);
-            }
-            return Ok();
+                Data = responseData,
+                IsSuccess = isSuccess,
+                ErrorMessage = errorMessage
+            };
         }
 
-   
-        private string RandomString(int length)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
+        #endregion
     }
 }
